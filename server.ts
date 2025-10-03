@@ -190,16 +190,20 @@ function forbidden(message: string): Response {
 }
 
 function withCors(handler: (req: Request) => Promise<Response> | Response) {
-  const allowedOrigin = 'http://localhost:5173';
+  const allowedOrigins = [
+    'http://localhost:5173',
+    'https://frontend-auth.sabanus.site'
+  ];
 
   return async (req: Request) => {
     const origin = req.headers.get('Origin');
-    const isAllowed = origin === allowedOrigin;
+    const isAllowed = allowedOrigins.includes(origin || '');
 
     const corsHeaders = {
-      'Access-Control-Allow-Origin': isAllowed ? allowedOrigin : '',
+      'Access-Control-Allow-Origin': isAllowed ? origin || '' : '',
       'Access-Control-Allow-Methods': 'GET, OPTIONS',
       'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+      'Access-Control-Allow-Credentials': 'true',
     };
 
     if (req.method === 'OPTIONS') {
